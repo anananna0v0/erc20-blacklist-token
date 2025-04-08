@@ -1,5 +1,3 @@
-# erc20-blacklist-token
-
 # ERC(ensor)-20 Token – Assignment 3 (Public Blockchains FSS 2025)
 
 ## Overview
