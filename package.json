@@ -1,0 +1,7 @@
+{
+  "name": "assignment_3",
+  "version": "1.0.0",
+  "main": "testToken.js",
+  "type": "module",
+  "license": "ISC"
+}
