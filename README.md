@@ -1,3 +1,5 @@
+> This project is implemented using [Hardhat](https://hardhat.org/) as the development framework.
+
 # ERCensor-20
 
 ERCensor-20 is a censorship-enabled ERC-20 token developed for a university blockchain assignment. It includes a blacklist mechanism that prevents token transfers involving blacklisted addresses.
