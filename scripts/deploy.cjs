@@ -1,33 +1,29 @@
 const hre = require("hardhat");
 
 async function main() {
-  // 取得 Hardhat 提供的測試帳號
-  const [deployer, validatorAccount] = await hre.ethers.getSigners();
+    const [deployer] = await hre.ethers.getSigners();
+    console.log("Deploying CensorableToken with deployer account:", deployer.address);
 
-  console.log("Deployer address:", deployer.address);
-  console.log("Validator address (as account):", validatorAccount.address);
+    const name = "Censorable Token";
+    const symbol = "CTK";
+    const initialSupply = hre.ethers.parseEther("100");
+    const validator = "0x8452E41BA34aC00458B70539264776b2a379448f";
 
-  // 1. 先部署 Validator 合約（用來記錄驗證資訊）
-  const EmptyValidator = await hre.ethers.getContractFactory("EmptyValidator");
-  const validatorContract = await EmptyValidator.deploy();
-  await validatorContract.waitForDeployment();
+    const CensorableToken = await hre.ethers.getContractFactory("CensorableToken");
+    const token = await CensorableToken.deploy(name, symbol, initialSupply, deployer.address, validator);
+    await token.waitForDeployment();
 
-  console.log("EmptyValidator deployed to:", validatorContract.target);
+    const address = await token.getAddress();
+    console.log("✅ CensorableToken deployed to:", address);
 
-  // 2. 再部署 CensorableToken，傳入 validator 合約地址 + validator 帳號地址
-  const CensorableToken = await hre.ethers.getContractFactory("CensorableToken");
-  const token = await CensorableToken.deploy(
-    validatorContract.target,
-    validatorAccount.address
-  );
-  await token.waitForDeployment();
+    const balance = await token.balanceOf(deployer.address);
+    const approveTx = await token.approve(validator, balance);
+    await approveTx.wait();
 
-  console.log("CensorableToken deployed to:", token.target);
+    console.log(`✅ Approved validator to spend ${hre.ethers.formatEther(balance)} tokens`);
 }
 
-main()
-  .then(() => process.exit(0))
-  .catch((error) => {
-    console.error(error);
+main().catch((error) => {
+    console.error("❌ Deployment failed:", error);
     process.exit(1);
-  });
+});

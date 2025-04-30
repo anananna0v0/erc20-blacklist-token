@@ -1,38 +1,33 @@
 # ERCensor-20
 
-ERCensor-20 is a censorship-enabled ERC-20 token developed as part of a university blockchain assignment. It features a blacklist mechanism that restricts token transfers to or from specified addresses.
+ERCensor-20 is a censorship-enabled ERC-20 token developed for a university blockchain assignment. It includes a blacklist mechanism that prevents token transfers involving blacklisted addresses.
 
 ## Features
 
-- Standard ERC-20 functionality (transfer, approve, balanceOf, etc.)
-- Blacklist functionality:
-  - `blacklistAddress(address)` to restrict an address
-  - `unblacklistAddress(address)` to lift restriction
-  - Transfers from/to blacklisted addresses are blocked
-  - Only the contract owner can modify the blacklist
+- Standard ERC-20 functionality
+- Blacklist system:
+  - `blacklistAddress(address)` restricts an address
+  - `unblacklistAddress(address)` lifts restriction
+  - Transfers **to or from** blacklisted addresses will revert
+  - Only the contract **owner or validator** may modify the blacklist
 
 ## Contract Structure
 
-- Inherits from OpenZeppelin's `ERC20` and `Ownable`
-- Inherits from `BaseAssignment` for validator interaction
-- Emits `Blacklisted(address)` and `Unblacklisted(address)` events
+- Inherits from:
+  - OpenZeppelin’s `ERC20` and `Ownable`
+  - `BaseAssignment` (for validator integration)
+- Events:
+  - `Blacklisted(address indexed account)`
+  - `UnBlacklisted(address indexed account)`
+- Validator address is hardcoded as per assignment requirements
 
 ## Deployment
 
-The contract constructor requires two parameters:
-- `address validatorContract`: Deployed validator contract (e.g., `EmptyValidator`)
-- `address validatorAccount`: Account to receive 10 tokens and get approval to spend 90
-
-At deployment:
-- Deployer receives 100 tokens
-- 10 tokens are transferred to the validator account
-- Validator is approved to spend the remaining 90
-
-## Testing
-
-Run the test flow with:
-
-```bash
-npx hardhat node
-npx hardhat run scripts/deploy.cjs --network localhost
-node scripts/testToken.js
+Constructor parameters:
+```solidity
+constructor(
+    string memory _name,
+    string memory _symbol,
+    uint256 _initialSupply,
+    address _initialOwner
+)
